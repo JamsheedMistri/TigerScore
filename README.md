@@ -9,6 +9,8 @@ TigerScore is an online testing form system for Martial Arts academies, original
 * Custom testing panel with organized skillsets for each student
 * Custom user navigation to locate students
 * Custom promotion application for students
+* Custom receipt for testing for both academy owner and tester
+* Payment verification
 
 ###Requirements
 * SQL database with a username and password combination that has read/write permissions for the database
