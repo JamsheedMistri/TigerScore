@@ -71,7 +71,7 @@
             $user = $_POST['user'];
             $password = $_POST['password'];
             $name = $_POST['name'];
-            echo "> Log - please read. If any text it red, the database initialization failed, so please click the link provided and go back.<br />";
+            echo "> Log - please read. If any text is red, the database initialization failed, so please click the link provided and go back.<br />";
             $connection = @mysqli_connect($address, $user, $password, $name);
             if (!$connection) {
               die('<span style="color: red">> Unable to connect to database: ' . mysqli_connect_error() . '. <a href="install.php?step=2">Please try again by clicking me</a>.</span>');
