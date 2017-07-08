@@ -150,7 +150,7 @@
                 var neededField = "fill out ";
                 if(first_name[0].value == ""){
                   neededField += "First Name";
-                 } else if(last_name[0].value !== ""){
+                 } else if(last_name[0].value == ""){
                   neededField += "Last Name";
                  } else if(age[0].value == ""){
                   neededField += "Age";
