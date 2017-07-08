@@ -147,7 +147,32 @@
                 document.getElementById("html").style.display = "none";
 
               } else {
-                alert("Your form was NOT submitted because you did not fill out all required fields!");
+                var neededField = "fill out ";
+                if(first_name[0].value == ""){
+                  neededField += "First Name";
+                 } else if(last_name[0].value !== ""){
+                  neededField += "Last Name";
+                 } else if(age[0].value == ""){
+                  neededField += "Age";
+                 } else if(gender[0].value == ""){
+                  neededField += "Gender";
+                 } else if(belt_size[0].value == ""){
+                  neededField += "Belt Size";
+                 } else if(present_belt[0].value == ""){
+                  neededField += "Present Belt";
+                 } else if(testing_for[0].value == ""){
+                  neededField += "Belt Testing for";
+                 } else if(home_phone[0].value == ""){
+                  neededField += "Home Phone";
+                 } else if(cell_phone[0].value == ""){
+                  neededField += "Cell Phone";
+                 } else if(email[0].value == ""){
+                  neededField += "Email";
+                 } else if(consent[0].value == ""){
+                  neededField = "give Parental Consent";
+                 }
+                   
+                alert("Your form was NOT submitted because you did not " + neededField + ".");
               }
         }
       </script>
