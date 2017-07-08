@@ -1,4 +1,4 @@
-![tigerscore](https://i.imgur.com/E6QrsHB.png)
+<img align="center" src="https://i.imgur.com/E6QrsHB.png" alt="tigerscore">
 TigerScore is an online testing form system for Martial Arts academies, originally created for [Tiger Martial Arts](http://tma-academy.net), made for viewing on a tablet such as an iPad. If you own a Martial Arts school and you would like to use this software, it is reccomended that you [email me](mailto:jmistri7@gmail.com) first since this software still may contain bugs. If you do not wish to do so, follow the instructions during installation carefully!
 
 ### Features
