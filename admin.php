@@ -34,6 +34,7 @@ if (!isset($_SESSION['master'])) {
 							<a href="?passwords"><li id="first">Edit Passwords</li></a>
 							<a href="?settings"><li>Edit Settings</li></a>
 							<a href="?information"><li>Information</li></a>
+							<a href="?logs"><li>Access Logs</li></a>
 						</ul>
 					</div>
 					<div id="content-container">
@@ -455,6 +456,11 @@ if (!isset($_SESSION['master'])) {
 								<p>Embed testing form code:</p>
 								<pre>&lt;iframe src="<?php echo $url; ?>" width="300" height="700" frameborder="0"&gt;&lt;/iframe&gt;</pre>
 								<?php
+							} else if (isset($_GET['logs'])) {
+								$logs = getData("data/log.json");//reverse
+								$logs = array_reverse($logs);
+								echo "<h3>Logs (ordered by newest first)</h3>";
+								foreach ($logs as $log) echo "> $log<br>";
 							} else {
 								?>
 								<h4>Please select an option to the right.<br><br>If you would like to test students, click <a href="panel.php">here</a>.</h4>
