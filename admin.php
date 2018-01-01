@@ -457,7 +457,7 @@ if (!isset($_SESSION['master'])) {
 								<pre>&lt;iframe src="<?php echo $url; ?>" width="300" height="700" frameborder="0"&gt;&lt;/iframe&gt;</pre>
 								<?php
 							} else if (isset($_GET['logs'])) {
-								$logs = getData("data/log.json");//reverse
+								$logs = getData("data/log.json");
 								$logs = array_reverse($logs);
 								echo "<h3>Logs (ordered by newest first)</h3>";
 								foreach ($logs as $log) echo "> $log<br>";
