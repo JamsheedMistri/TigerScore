@@ -1,0 +1,173 @@
+#form {
+	background-color: white;
+	height: 100%;
+}
+
+input[type="text"], input[type="tel"], input[type="email"], select {
+	display: block;
+	margin-bottom: 10px;
+	padding: 10px;
+	color: black;
+	border: none;
+	text-align: left;
+	border-bottom: 1px solid #e7e7e7;
+	padding: 7.5px;
+	font-size: 1em;
+}
+
+input:focus {
+	outline: none;
+	border-color: green;
+}
+
+input[type="submit"] {
+	margin: 0;
+	float: left;
+	font-size: 1em;
+	padding: 10px;
+	width: 20em;
+	background-color: #79c15b;
+	color: white;
+	padding: 5px 20px !important;
+	border: none;
+	border-radius: 3px;
+}
+
+input[type="submit"]:hover {
+	cursor: pointer;
+	background-color: #97e278;
+}
+
+select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	background-image:
+	linear-gradient(45deg, transparent 50%, gray 50%),
+	linear-gradient(135deg, gray 50%, transparent 50%);
+	background-position:
+	calc(100% - 20px) calc(1em + 2px),
+	calc(100% - 15px) calc(1em + 2px),
+	calc(100% - 2.5em) 0.5em;
+	background-size:
+	5px 5px,
+	5px 5px,
+	1px 1.5em;
+	background-repeat: no-repeat;
+}
+
+select:focus {
+	background-image:
+	linear-gradient(45deg, green 50%, transparent 50%),
+	linear-gradient(135deg, transparent 50%, green 50%);
+	background-position:
+	calc(100% - 15px) 1em,
+	calc(100% - 20px) 1em,
+	calc(100% - 2.5em) 0.5em;
+	background-size:
+	5px 5px,
+	5px 5px,
+	1px 1.5em;
+	background-repeat: no-repeat;
+	border-color: green;
+	outline: 0;
+}
+
+label {
+	float: left;
+}
+
+.label__checkbox {
+	display: none;
+}
+
+.label__check {
+	display: inline-block;
+	border-radius: 50%;
+	border: 5px solid rgba(0,0,0,0.1);
+	background: white;
+	vertical-align: middle;
+	margin-right: 20px;
+	width: 2em;
+	height: 2em;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: border .3s ease;
+}
+
+.label__check i {
+	opacity: 0.2;
+	font-size: ~'calc(1rem + 1vw)';
+	color: transparent;
+	transition: opacity .3s .1s ease;
+	-webkit-text-stroke: 3px rgba(0,0,0,.5);
+}
+
+.label__check:hover {
+	border: 5px solid rgba(0,0,0,0.2);
+}
+
+.label__checkbox:checked + .label__text .label__check {
+	animation: check .5s cubic-bezier(0.895, 0.030, 0.685, 0.220) forwards;
+}
+
+.label__checkbox:checked + .label__text .label__check .icon {
+	opacity: 1;
+	transform: scale(0);
+	color: white;
+	-webkit-text-stroke: 0;
+	animation: icon .3s cubic-bezier(1.000, 0.008, 0.565, 1.650) .1s 1 forwards;
+}
+
+@keyframes icon {
+	from {
+		opacity: 0;
+		transform: scale(0.3);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1)
+	}
+}
+
+@keyframes check {
+	0% {
+		width: 1.5em;
+		height: 1.5em;
+		border-width: 5px;
+	}
+	10% {
+		width: 1.5em;
+		height: 1.5em;
+		opacity: 0.1;
+		background: rgba(0,0,0,0.2);
+		border-width: 15px;
+	}
+	12% {
+		width: 1.5em;
+		height: 1.5em;
+		opacity: 0.4;
+		background: rgba(0,0,0,0.1);
+		border-width: 0;
+	}
+	50% {
+		width: 2em;
+		height: 2em;
+		background: #00d478;
+		border: 0;
+		opacity: 0.6;
+	}
+	100% {
+		width: 2em;
+		height: 2em;
+		background: #00d478;
+		border: 0;
+		opacity: 1;
+	}
+}
+
+.consent-label {
+	float: left;
+	font-size: 1.5em;
+}

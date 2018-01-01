@@ -1,463 +1,275 @@
 <?php
-  include 'base.php';
-  include 'core.php';
+require_once("utils.php");
+if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
+	header("Location: .");
+} else {
+	?>
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<?php require_once("templates/headers.php"); ?>
+		<title>TigerScore &bull; Panel</title>
+		<link href="assets/css/main.css" rel="stylesheet">
+		<link href="assets/css/panel.css" rel="stylesheet">
+	</head>
+	<body>
+		<?php include 'templates/nav.php'; ?>
+		<div id="modal-bg">
+			<div id="modal">
+				<div id="modal-header"><span></span> has fullfilled all of their requirements</div>
+				<div id="modal-content">Would you like to pass them? If you do not hit "Pass", they will not be marked as passed until you do so.</div>
+				<div class="clickable pass_student">Pass Now</div>
+				<div class="clickable not_yet">Not Yet</div>
+			</div>
+		</div>
+		<section id="panel">
+			<div id="sidebar">
+				<?php
+				if (isset($_GET['student_test'])) {
+					?>
+					<ul>
+						<a href="?student_search" id="back_to_list"><li><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;Back to List</li></a>
+						<a href="?student_test&student=<?php echo $_GET['student']; ?>"><li>Student Info</li></a>
+					</ul>
 
-  // If not logged in, redirect to login page.
-  if (empty($_SESSION['logged_in'])) {
-    header('Location: .');
-  } else {
-?>
+					<h4>Exam</h4>
+					<ul>
+						<?php
+						$student_id = $_GET['student'];
+						$types = getData("data/tests.json")[$student_id]['requirements'];
 
-<!DOCTYPE html>
-<html lang="en">
+						foreach ($types as $type => $requirements) {
+							if (sizeof($requirements) == 0) continue;
+							echo '<a href="?student_test&student='.$student_id.'&type='.$type.'"><li data-type="'.$type.'">'.ucfirst($type);
+							$completely_passed = true;
+							foreach ($requirements as $requirement => $passed) {
+								if (!$passed) {
+									$completely_passed = false;
+									break;
+								}
+							}
+							if ($completely_passed) {
+								echo ' <span class="green"><i class="fa fa-check-square"></i> (Completed)</span>';
+							}
+							echo '</li></a>';
+						}
+						?>
+					</ul>
+					<?php
+				} else {
+					?>
+					<h4>Students</h4>
+					<ul>
+						<a href="?student_search"><li>Search for students</li></a>
+						<a href="?student_list"><li>List all students</li></a>
+					</ul>
+					<?php
+				}
+				?>
+				<br><br><br><br><br><br><br><br>
+				<h4>Last 5 Students</h4>
+				<ul>
+					<?php
+					$last5 = getData("data/last5.json");
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+					for ($i = 0; $i < sizeof($last5); $i ++) {
+						if ($i >= 5) break;
+						echo '<a href="?student_test&student='.$last5[$i].'"><li>';
+						echo drawStudent($last5[$i]);
+						echo '</li></a>';
+					}
+					?>
+				</ul>
+			</div>
+			<div id="content-container">
+				<div id="content">
+					<?php
+					if (isset($_GET['student_search'])) {
+						?>
+						<h3>Search for a student</h3>
+						<input id="student_search" type="text" placeholder="Start typing..." autofocus />
+						<br><br>
+						<ul id="student_search_list" class="student_list">No results</ul>
+						<?php
+					} else if (isset($_GET['student_list'])) {
+						echo '<h3>List of all students</h3>';
+						echo '<ul class="student_list">';
+						foreach (getData("data/tests.json") as $student => $value) {
+							echo '<a href="?student_test&student='.$student.'"><li>';
+							echo drawStudent($student);
+							echo '</li></a>';
+						}
+						echo '</ul>';
+					} else if (isset($_GET['student_test'])) {
+						$student_id = $_GET['student'];
+						$student_data = getData("data/tests.json")[$student_id];
+						$student_full_name = $student_data['first_name']." ".$student_data['last_name'];
+						$student_first_name = $student_data['first_name'];
+						if ($student_data['passed']) {
+							?>
+							<h2 class="orange">Test for <?php echo $student_full_name; ?></h2>
+							<br>
+							<h3 class="orange">Info</h3>
+							<div class="info">
+								<h5><b>Exam Completed (Passed)</b>:
+									<?php 
+									if ($student_data['passed']) {
+										echo "<span class='green'>Yes</span>";
+									} else {
+										echo "<span class='red'>No</span>";
+									}
+									?>
+								</h5>
+								<h5><b>Belt Size</b>: <?php echo $student_data['belt_size']; ?></h5>
+								<h5><b>Present Belt</b>: 
+									<?php
+									echo getData("config/belts.json")[$student_data['present_belt']]['name']." "; 
+									echo drawBelt($student_data['present_belt']);
+									?>
+								</h5>
+								<h5><b>Testing For</b>: 
+									<?php
+									echo getData("config/belts.json")[$student_data['testing_for']]['name']." "; 
+									echo drawBelt($student_data['testing_for']);
+									?>
+								</h5>
+								<h5><b>Age</b>:
+									<?php
+									$age = $student_data['age'];
+									echo $age." ";
+									if ($age < 8) {
+										echo "(breaking: thin board)";
+									} else if ($age < 13) {
+										echo "(breaking: medium board)";
+									} else {
+										echo "(breaking: thick board)";
+									}
+									?>
+								</h5>
+								<h5><b>Gender</b>: <?php echo $student_data['gender']; ?></h5>
+								<h5><b>Home Phone</b>: <?php echo $student_data['home_phone']; ?></h5>
+								<h5><b>Cell Phone</b>: <?php echo $student_data['cell_phone']; ?></h5>
+								<h5><b>Email</b>: <?php echo $student_data['email']; ?></h5>
+								<h5><b>Latest Tester</b>: <?php echo $student_data['latest_tester']; ?></h5>
+								<h5><b>Payment Validated</b>:
+									<?php 
+									if ($student_data['payment_validated']) {
+										echo "<span class='green'>Yes</span>";
+									} else {
+										echo "<span class='red'>No</span>";
+									}
+									?>
+								</h5>
+							</div>
+							<?
+						} else {
+							?>
+							<h2 class="orange">Testing <?php echo $student_full_name; ?></h2>
+							<?php
+							if (isset($_GET['type'])) {
+								$type = $_GET['type'];
+								$requirements = $student_data['requirements'][$type];
 
-    <link rel="apple-touch-icon-precomposed" href="images/TigerScore.png" />
-    <link rel="apple-touch-icon" href="images/TigerScore.png" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+								echo '<div class="type_testing">';
 
-    <title>TigerScore</title>
+								$first_done = false;
+								foreach ($requirements as $requirement => $passed) {
+									if (!$first_done) {
+										$first_done = true;
+										echo '<h4 id="first">';
+									} else {
+										echo '<h4>';
+									}
+									?>
+									<span><?php echo getData("config/curriculum/$type.json")[$requirement]; ?></span>
+									<div class="clickable pass_button <?php if ($passed) echo "passed"; ?>" data-student="<?php echo $student_id; ?>" data-type="<?php echo $type; ?>" data-requirement="<?php echo $requirement; ?>"><?php if ($passed) echo "Undo"; else echo "Pass"; ?></div>
+									<div class="clickable check" <?php if ($passed) echo 'style="display: block"'; ?>><i class="fa fa-check"></i></div>
+									<div style="clear: both"></div>
+								</h4>
+								<?php
+							}
+							echo '</div>';
+						} else {
+							?>
+							<h5>Please select a skill to test on the left hand side to test <?php echo $student_first_name; ?>.</h5>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/main.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css">
-</head>
-
-<body>
-    <?php include 'templates/nav.php'; ?>
-
-    <div id="grade">
-      <div id="close-grade" onclick="closeGrade()">✕</div>
-      <div id="grade-content">
-        <h2>Grading <span id="which-form">Teguk Il Jang</span></h2>
-        <p>Refer to the guidelines on the wall if you do not know how to use this system.</p>
-        <h1 id="grade-mistakes">
-          <span id='grade-mistakes-content'>0</span> mistakes
-          <br /><br />
-          <span id='grade-pass'><button class='label label-danger' onclick='removeMistake()'>-</button>&nbsp;&nbsp;<button class='label label-success' id="grade-pass-button">Pass</button>&nbsp;&nbsp;<button class='label label-danger' style='margin-bottom: 5px;' onclick='addMistake()'>+</button></span>
-        </h1>
-      </div>
-    </div>
-    <!-- Main panel -->
-    <section id="panel">
-        <!-- Sidebar -->
-        <div class="sidebar">
-          <h2>STUDENTS</h2>
-          <h3>SEARCH</h3>
-          <form id="student" action="panel.php" method="get">
-              <input name="search" type="text" class="form-control student-search" placeholder="Student Name" autocomplete="off">
-              <input type="submit" class="login ss" placeholder="Student Name">
-          </form>
-
-          <h3>LIST</h3>
-          <div class="sidebar-list">
-            <?php
-              $result = mysqli_query($connection, "SELECT * FROM `tests`");
-              $counter = 1;
-
-              // Echo each student's name on the sidebar
-              while ($rows = mysqli_fetch_array($result)) {
-                echo '<a href="panel.php?student=' . $rows['full_name'] . '" class="noa">';
-                if ($counter == 1) {
-                  if (isset($_GET['student']) && $rows['full_name'] == $_GET['student']) {
-                    echo '<div class="plist" style="border-top: 1px solid #494944; color: orange;">';
-                  } else {
-                    echo '<div class="plist" style="border-top: 1px solid #494944">';
-                  }
-                } else {
-                  if (isset($_GET['student']) && $rows['full_name'] == $_GET['student']) {
-                    echo '<div class="plist" style="color: orange;">';
-                  } else {
-                    echo '<div class="plist">';
-                  }
-                }
-
-                // Echo user's belt color
-                echo'<span style="border-radius: 3px; ';
-
-                if (strpos($rows['present_belt'], '_') !== false) {
-                  echo 'background: linear-gradient(to bottom, ' . substr($rows['present_belt'], 0, strpos($rows['present_belt'], "_")) . ', black 40%, ' . substr($rows['present_belt'], strpos($rows['present_belt'], "_") + 1, strlen($rows['present_belt'])) . ' 50%, black 60%, ' . substr($rows['present_belt'], 0, strpos($rows['present_belt'], "_")) . ');';
-                } else {
-                  echo 'background-color: ' . $rows['present_belt'];
-                }
-                echo '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;' . $rows['full_name'] . '<br />';
-                $paycheck = mysqli_query($connection, "SELECT * FROM `info` WHERE `full_name` = '" . $rows['full_name'] . "';");
-                while ($p = mysqli_fetch_array($paycheck)) {
-                  if ($p['paid'] == 'false') {
-                    echo '<span class="label label-danger">not paid</span>';
-                  } else if ($p['paid'] == 'unsure') {
-                    echo '<span class="label label-warning">unsure</span>';
-                  } else {
-                    echo '<span class="label label-success">paid</span>';
-                  }
-                }
-                echo "</div></a>";
-
-                $counter ++;
-              }
-            ?>
-          </div>
-        </div>
-
-        <!-- Panel content -->
-        <div id="panel-content">
-          <?php
-            if (isset($_GET['search'])) {
-              echo "<div class='sidebar-list full'>";
-              // If instructor is searching, give search results
-              $search = strtolower($_GET['search']);
-              echo "<h2>SEARCH RESULTS FOR <span style='color: orange;'>" . strtoupper($search) . "</span></h2>";
-              $result = mysqli_query($connection, "SELECT * FROM `tests`");
-
-              $counter = 1;
-
-              // If nothing is added in search bar, list all students in the database
-              if (strlen($search) == 0) {
-                while ($rows = mysqli_fetch_array($result)) {
-                  echo '<a href="panel.php?student=' . $rows['full_name'] . '" class="noa">';
-                  if ($counter == 1) {
-                    echo '<div class="plist" style="border-top: 1px solid #494944">';
-                  } else {
-                    echo '<div class="plist">';
-                  }
-
-                  echo'<span style="border-radius: 3px; ';
-
-                  if (strpos($rows['present_belt'], '_') !== false) {
-                    echo 'background: linear-gradient(to bottom, ' . substr($rows['present_belt'], 0, strpos($rows['present_belt'], "_")) . ', black 40%, ' . substr($rows['present_belt'], strpos($rows['present_belt'], "_") + 1, strlen($rows['present_belt'])) . ' 50%, black 60%, ' . substr($rows['present_belt'], 0, strpos($rows['present_belt'], "_")) . ');';
-                  } else {
-                    echo 'background-color: ' . $rows['present_belt'];
-                  }
-                  echo '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;';
-                  echo $rows['full_name'] . "</div></a>";
-
-                  $counter ++;
-                }
-
-                return;
-              }
-
-              $counter = 1;
-
-              // Otherwise, retrieve all names matching the search results
-              while ($rows = mysqli_fetch_array($result)) {
-                if (strpos(strtolower($rows['full_name']), $search) !== false) {
-                  echo '<a href="panel.php?student=' . $rows['full_name'] . '" class="noa">';
-                  if ($counter == 1) {
-                    echo '<div class="plist" style="border-top: 1px solid #494944">';
-                  } else {
-                    echo '<div class="plist">';
-                  }
-
-                  echo'<span style="border-radius: 3px; ';
-
-                  if (strpos($rows['present_belt'], '_') !== false) {
-                    echo 'background: linear-gradient(to bottom, ' . substr($rows['present_belt'], 0, strpos($rows['present_belt'], "_")) . ', black 40%, ' . substr($rows['present_belt'], strpos($rows['present_belt'], "_") + 1, strlen($rows['present_belt'])) . ' 50%, black 60%, ' . substr($rows['present_belt'], 0, strpos($rows['present_belt'], "_")) . ');';
-                  } else {
-                    echo 'background-color: ' . $rows['present_belt'];
-                  }
-                  echo '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;';
-                  echo $rows['full_name'] . "</div></a>";
-
-                  $counter ++;
-                }
-              }
-
-              if ($counter == 1) {
-                echo 'No results found!';
-              }
-              echo "</div>";
-              // If not searching, and a student is selected, display.
-            } else if (isset($_GET['student'])) {
-              $result = mysqli_query($connection, "SELECT * FROM `tests` WHERE `full_name` = '" . $_GET['student'] . "';");
-              $result_check = mysqli_query($connection, "SELECT * FROM `tests` WHERE `full_name` = '" . $_GET['student'] . "';");
-
-              $forms = false;
-              $breaking = false;
-              $sparring = false;
-
-              $completed = true;
-
-              while ($rows = mysqli_fetch_array($result_check)) {
-                foreach ($rows as $k => $v) {
-                  if ($v !== null && !is_numeric($k) && $v == 0 && $k !== "full_name" && $k !== "present_belt" && $k !== "latest_tester") {
-                    $completed = false;
-                  }
-                }
-              }
-
-              if (!$completed) {
-                // Echo each of the requirement sections
-                while ($rows = mysqli_fetch_array($result)) {
-                  foreach ($rows as $k => $v) {
-                    // Echo title for each, just once
-                    if ($v !== null && !is_numeric($k)) {
-                      if (!$forms && substr($k, 0, 5) == "forms") {
-                        echo "<div class='forms'>
-                                <h2>FORMS</h2>";
-                        $forms = true;
-                      }
-                      if (!$breaking && substr($k, 0, 8) == "breaking") {
-                        if ($forms) {
-                          echo "</div>";
-                        }
-                        echo "<div class='breaking'>
-                                <h2>BREAKING</h2>";
-                        $breaking = true;
-                      }
-                      if (!$sparring && substr($k, 0, 8) == "sparring") {
-                        if (($forms && !$breaking) || (!$forms && $breaking) || ($forms && $breaking)) {
-                          echo "</div>";
-                        }
-                        echo "<div class='sparring'>
-                                <h2>SPARRING</h2>";
-                        $sparring = true;
-                      }
-
-                      // Echo requirements in specific form
-                      if ($k !== "full_name" && $k !== "present_belt") {
-                        if (substr($k, 0, 5) == "forms") {
-                          if ($v == 0) {
-                            echo "<table style='width: 100%;'>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: left; float: left;'>
-                                        <span class='label label-primary'>" . $test_requirements[$k] . "</span>
-                                      </h4>
-                                    </td>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: right; float: right;'>
-                                        <button class='label label-default' id='undo_" . $k . "' onclick='undo(\"" . $k . "\")' style='display: none;'>Undo</button>
-                                        <button class='label label-success' id='pass_" . $k . "' onclick='grade(\"" . $k . "\")'>Grade</button>
-                                      </h4>
-                                    </td>
-                                  </table>";
-                          } else if ($v == 1) {
-                            echo "<table style='width: 100%;'>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: left; float: left;'>
-                                        <span class='label label-primary'>" . $test_requirements[$k] . "</span>
-                                      </h4>
-                                    </td>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: right; float: right;'>
-                                        <button class='label label-default' id='undo_" . $k . "' onclick='undo(\"" . $k . "\")'>Undo</button>
-                                        <button class='label label-success' id='pass_" . $k . "' onclick='grade(\"" . $k . "\")'>✓</button>
-                                      </h4>
-                                    </td>
-                                  </table>";
-                          }
-                        }
-
-                        if (substr($k, 0, 8) == "breaking") {
-                          if ($v == 0) {
-                            echo "<table style='width: 100%;'>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: left; float: left;'>
-                                        <span class='label label-primary'>" . $test_requirements[$k] . "</span>
-                                      </h4>
-                                    </td>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: right; float: right;'>
-                                        <button class='label label-default' id='undo_" . $k . "' onclick='undo(\"" . $k . "\")' style='display: none;'>Undo</button>
-                                        <button class='label label-success' id='pass_" . $k . "' onclick='pass(\"" . $k . "\")'>Pass</button>
-                                      </h4>
-                                    </td>
-                                  </table>";
-                          } else if ($v == 1) {
-                            echo "<table style='width: 100%;'>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: left; float: left;'>
-                                        <span class='label label-primary'>" . $test_requirements[$k] . "</span>
-                                      </h4>
-                                    </td>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: right; float: right;'>
-                                        <button class='label label-default' id='undo_" . $k . "' onclick='undo(\"" . $k . "\")'>Undo</button>
-                                        <button class='label label-success' id='pass_" . $k . "' onclick='pass(\"" . $k . "\")'>✓</button>
-                                      </h4>
-                                    </td>
-                                  </table>";
-                          }
-                        }
-
-                        if (substr($k, 0, 8) == "sparring") {
-                          if ($v == 0) {
-                            echo "<table style='width: 100%;'>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: left; float: left;'>
-                                        <span class='label label-primary'>" . $test_requirements[$k] . "</span>
-                                      </h4>
-                                    </td>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: right; float: right;'>
-                                        <button class='label label-default' id='undo_" . $k . "' onclick='undo(\"" . $k . "\")' style='display: none;'>Undo</button>
-                                        <button class='label label-success' id='pass_" . $k . "' onclick='pass(\"" . $k . "\")'>Pass</button>
-                                      </h4>
-                                    </td>
-                                  </table>";
-                          } else if ($v == 1) {
-                            echo "<table style='width: 100%;'>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: left; float: left;'>
-                                        <span class='label label-primary'>" . $test_requirements[$k] . "</span>
-                                      </h4>
-                                    </td>
-                                    <td>
-                                      <h4 style='display: inline-block; text-align: right; float: right;'>
-                                        <button class='label label-default' id='undo_" . $k . "' onclick='undo(\"" . $k . "\")'>Undo</button>
-                                        <button class='label label-success' id='pass_" . $k . "' onclick='pass(\"" . $k . "\")'>✓</button>
-                                      </h4>
-                                    </td>
-                                  </table>";
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            } else {
-              // If not searching and no student is selected, nothing happens.
-              echo "<p>Select a student from the sidebar or search the student's name.</p>";
-            }
-           ?>
-           </div>
-           <!-- Save buttons and latest tester -->
-           <?php if (isset($_GET['student'])) { ?>
-             <div class="latest-instructor">
-               <b>Tester</b> - <?php $result = mysqli_query($connection, "SELECT * FROM `tests` WHERE `full_name` = '" . $_GET['student'] . "';"); while ($rows = mysqli_fetch_array($result)) { echo $rows['latest_tester']; } ?>
-             </div>
-           <?php } ?>
-        </div>
-    </section>
-
-    <script src="js/core.js"></script>
-    <script>
-      var formBeingGraded = "";
-      var mistakes = 0;
-
-      function addMistake() {
-        var content = document.getElementById("grade-mistakes-content");
-        var passButton = document.getElementById("grade-pass-button");
-        mistakes ++;
-
-        content.innerHTML = mistakes;
-        if (mistakes >= 5) {
-          passButton.style.visibility = "hidden";
-        } else {
-          passButton.style.visibility = "visible";
-        }
-      }
-
-      function removeMistake() {
-        var content = document.getElementById("grade-mistakes-content");
-        var passButton = document.getElementById("grade-pass-button");
-
-        if (mistakes > 0) {
-          mistakes --;
-        }
-
-        content.innerHTML = mistakes;
-        if (mistakes >= 5) {
-          passButton.style.visibility = "hidden";
-        } else {
-          passButton.style.visibility = "visible";
-        }
-      }
-
-      function pass(skill) {
-        // Frontend stuff
-        var passButton = document.getElementById("pass_" + skill);
-        passButton.innerHTML = "✓";
-
-        var undoButton = document.getElementById("undo_" + skill);
-        undoButton.style.display = "inline-block";
-
-        // Save to Database
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "save.php", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        var request = "";
-        request += skill + "=1&requested=1&full_name=" + '<?php echo $_GET['student']; ?>';
-        xhttp.send(request);
-      }
-
-      function grade(skill) {
-        if (document.getElementById("pass_" + skill).innerHTML == "✓") {
-          return;
-        }
-        // Frontend stuff
-        document.getElementById("grade").style.display = "block";
-        formBeingGraded = skill;
-        document.getElementById("which-form").innerHTML = forms[formBeingGraded];
-      }
-
-      function closeGrade() {
-        document.getElementById("grade").style.display = "none";
-        document.getElementById("grade-pass-button").style.visibility = "visible";
-        mistakes = 0;
-        document.getElementById("grade-mistakes-content").innerHTML = "0";
-        formBeingGraded = "";
-      }
-
-      document.getElementById("grade-pass-button").onclick = function() {
-        if (mistakes < 5) {
-          pass(formBeingGraded);
-          closeGrade();
-        }
-      }
-
-      function undo(skill) {
-        // Frontend stuff
-        var passButton = document.getElementById("pass_" + skill);
-
-        var undoButton = document.getElementById("undo_" + skill);
-        undoButton.style.display = "none";
-
-        if (skill.indexOf('forms') !== -1) {
-          passButton.innerHTML = "Grade";
-        } else {
-          passButton.innerHTML = "Pass";
-        }
-
-        // Save to Database
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "save.php", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        var request = "";
-        request += skill + "=0&requested=1&full_name=" + '<?php echo $_GET['student']; ?>';
-        xhttp.send(request);
-      }
-
-      var panelContent = document.getElementById("panel-content");
-      if (panelContent.innerHTML.trim() == "") {
-        <?php
-          $result = mysqli_query($connection, "SELECT * FROM `info` WHERE `full_name` = '" . $_GET['student'] . "';");
-          $testing_for = "";
-          $belt_size = 0;
-
-          while ($row = mysqli_fetch_array($result)) {
-            $testing_for = $row['testing_for'];
-            $belt_size = $row['belt_size'];
-          }
-        ?>
-        panelContent.innerHTML = "<h4 style='text-align: center;'><span class='label label-primary'><?php echo $_GET['student']; ?></span> has passed their exam and can recieve their <span class='label label-default'>size <?php echo $belt_size; ?></span> <span  class='label label-danger'><?php echo strtolower($belt_names[$testing_for]); ?></span> !</h4>";
-      }
-    </script>
-
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Allow links to be clicked -->
-    <script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
+							<br>
+							<h3 class="orange">Info</h3>
+							<div class="info">
+								<h5><b>Exam Completed (Passed)</b>:
+									<?php 
+									if ($student_data['passed']) {
+										echo "<span class='green'>Yes</span>";
+									} else {
+										echo "<span class='red'>No</span>";
+									}
+									?>
+								</h5>
+								<h5><b>Belt Size</b>: <?php echo $student_data['belt_size']; ?></h5>
+								<h5><b>Present Belt</b>: 
+									<?php
+									echo getData("config/belts.json")[$student_data['present_belt']]['name']." "; 
+									echo drawBelt($student_data['present_belt']);
+									?>
+								</h5>
+								<h5><b>Testing For</b>: 
+									<?php
+									echo getData("config/belts.json")[$student_data['testing_for']]['name']." "; 
+									echo drawBelt($student_data['testing_for']);
+									?>
+								</h5>
+								<h5><b>Age</b>:
+									<?php
+									$age = $student_data['age'];
+									echo $age." ";
+									if ($age < 8) {
+										echo "(breaking: thin board)";
+									} else if ($age < 13) {
+										echo "(breaking: medium board)";
+									} else {
+										echo "(breaking: thick board)";
+									}
+									?>
+								</h5>
+								<h5><b>Gender</b>: <?php echo $student_data['gender']; ?></h5>
+								<h5><b>Home Phone</b>: <?php echo $student_data['home_phone']; ?></h5>
+								<h5><b>Cell Phone</b>: <?php echo $student_data['cell_phone']; ?></h5>
+								<h5><b>Email</b>: <?php echo $student_data['email']; ?></h5>
+								<h5><b>Latest Tester</b>: <?php echo $student_data['latest_tester']; ?></h5>
+								<h5><b>Payment Validated</b>:
+									<?php 
+									if ($student_data['payment_validated']) {
+										echo "<span class='green'>Yes</span>";
+									} else {
+										echo "<span class='red'>No</span>";
+									}
+									?>
+								</h5>
+							</div>
+							<?php
+						}
+					}
+				} else {
+					header("Location: ?student_search");
+				}
+				?>
+			</div>
+		</div>
+	</section>
+	<?php require_once("templates/scripts.php"); ?>
+	<script> var shouldCheckIfPassed = false; </script>
+	<?php
+	if (isset($_GET['student']) && !getData("data/tests.json")[$_GET['student']]['passed']) {
+		echo "<script>
+		var id = '".$_GET['student']."';
+		var first_name = '".getData("data/tests.json")[$_GET['student']]['first_name']."';
+		shouldCheckIfPassed = true;
+		</script>";
+	}
+	?>
+	<script src="assets/js/panel.js"></script>
 </body>
 </html>
-
-<?php } ?>
+<?php
+}
+?>

@@ -1,30 +1,39 @@
-<?php include 'config.php'; ?>
+<nav class="navbar fixed-top" role="navigation">
+	<div class="navbar-header">
+		<a class="navbar-brand" href=".">TigerScore</a>
+		<div class="nav-wrapper">
+			<ul class="nav navbar-left">
+				<li><a href="testing_form.php?from_app" target="_blank">Testing Form</a></li>
+				<?php
+				if (isset($_SESSION['master'])) {
+					?>
+					<li><a href="panel.php">Testing Panel</a></li>
+					<li><a href="admin.php" class="red">Admin Panel</a></li>		
+					<?php
+				}
+				?>
+			</ul>
+		</div>
+	</div>
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="."><?php if (isset($configured)) { require_once("base.php"); $read = mysqli_query($connection, "SELECT * FROM `accounts`;"); while ($row = mysqli_fetch_array($read)) { echo $row['site_name']; } } else { echo "TigerScore"; } ?></a>
-            <?php if (!empty($_SESSION['logged_in'])) { ?>
-              <ul class="nav navbar-nav">
-                <li>
-                    <a href="panel.php">Testing Panel</a>
-                </li>
-            </ul>
-            <?php } ?>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li>
-                    <?php if (!empty($_SESSION['logged_in'])) { echo '<a href="logout.php">Log Out of Instructor ' . $_SESSION['name'] . '\'s Account</a>'; } else if (isset($configured)) { echo '<a href=".">Log In</a>'; } ?>
-                </li>
-            </ul>
-        </div>
-    </div>
+	<ul class="nav navbar-right">
+		<?php
+		if (isConfigured()) {
+			if (isset($_SESSION['master'])) {
+				?>
+				<li><a href='logout.php'>Log Out Of <?php echo $_SESSION['master']; ?>'s Admin Account</a></li>
+				<?php
+			} else if (isset($_SESSION['instructor'])) {
+				?>
+				<li><a href='logout.php'>Log Out of Instructor <?php echo $_SESSION['instructor']; ?>'s Account</a></li>
+				<?php
+			} else {
+				?>
+				<li><a href=".?admin">Log In As Admin</a></li>
+				<li><a href=".">Log In</a></li>
+				<?php
+			}
+		}
+		?>
+	</ul>
 </nav>

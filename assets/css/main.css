@@ -1,0 +1,77 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+body, html {
+  width: 100vw;
+  height: 100vh;
+  font-family: "Open Sans", sans-serif;
+  color: white;
+  position: fixed;
+  padding: 0;
+  margin: 0;
+}
+
+#welcome {
+  height: 100%;
+  background-color: #30302e;
+  padding-top: 150px;
+}
+
+nav {
+  background-color: #21211d;
+  border-bottom: 1px solid black;
+}
+
+.navbar-brand {
+  color: #f29200 !important;
+  display: inline-block;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 3em;
+}
+
+h2, h3 {
+  font-weight: bold;
+}
+
+.navbar-right li {
+  margin-left: 25px;
+}
+
+.navbar-right li a {
+  color: white;
+}
+
+.navbar-right li a:hover {
+  color: orange;
+  text-decoration: none;
+}
+
+.nav-wrapper {
+  display: inline-block;
+}
+
+.navbar-left {
+}
+
+.navbar-left li {
+  margin-right: 25px;
+}
+
+.navbar-left li a {
+  color: white;
+}
+
+.navbar-left li a:hover {
+  color: orange;
+  text-decoration: none;
+}
+
+.red {
+  color: red !important;
+}
+
+.red:hover {
+  color: tomato !important;
+}

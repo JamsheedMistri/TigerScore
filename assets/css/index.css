@@ -1,0 +1,51 @@
+.inp {
+  display: block;
+  margin: auto;
+  margin-bottom: 10px;
+  text-align: center;
+  padding: 10px;
+  color: black;
+  border-radius: 5px;
+  border: none;
+  font-size: 1.25em;
+}
+
+.login {
+  display: block;
+  margin: auto;
+  margin-bottom: 10px;
+  text-align: center;
+  padding: 15px;
+  padding-left: 50px;
+  padding-right: 50px;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  font-size: 1.25em;
+  background-color: #79c15b;
+}
+
+.login:hover {
+  cursor: pointer;
+  background-color: #97e278;
+}
+
+.admin-login {
+  display: block;
+  margin: auto;
+  margin-bottom: 10px;
+  text-align: center;
+  padding: 15px;
+  padding-left: 50px;
+  padding-right: 50px;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  font-size: 1.25em;
+  background-color: #aa1e1e;
+}
+
+.admin-login:hover {
+  cursor: pointer;
+  background-color: red;
+}

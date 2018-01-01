@@ -1,7 +1,6 @@
 <?php
-	include "base.php";
-	$_SESSION = array();
-	session_destroy();
-
-	header("Location: .");
+require_once("utils.php");
+$_SESSION = [];
+session_destroy();
+alert("Successfully logged out!", ".");
 ?>
