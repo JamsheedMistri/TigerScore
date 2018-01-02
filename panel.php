@@ -265,6 +265,17 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 		var first_name = '".getData("data/tests.json")[$_GET['student']]['first_name']."';
 		shouldCheckIfPassed = true;
 		</script>";
+	} else if (isset($_GET['student_search'])) {
+		$current = getData("data/tests.json");
+		$new = [];
+		foreach ($current as $key => $value) {
+			$new[$key] = [
+				"first_name" => $current[$key]['first_name'],
+				"last_name" => $current[$key]['last_name'],
+				"draw" =>	drawStudent($key)
+			];
+		}
+		echo "<script>var studentList = ".json_encode($new).";</script>";
 	}
 	?>
 	<script src="assets/js/panel.js"></script>

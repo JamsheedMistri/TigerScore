@@ -69,12 +69,6 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 			$count ++;
 		}
 		setData("data/last5.json", $new);
-	} else if (isset($_POST['get_students'])) {
-		$current = getData("data/tests.json");
-		foreach ($current as $key => $value) {
-			$current[$key]['draw'] = drawStudent($key);
-		}
-		echo json_encode($current);
 	} else {
 		header("Location: .");
 	}

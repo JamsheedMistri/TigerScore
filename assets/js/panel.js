@@ -1,5 +1,3 @@
-var studentList;
-
 $(".pass_button").click(function() {
 	var button = $(this);
 	var student = button.data("student");
@@ -64,9 +62,6 @@ $("#student_search").keyup(function() {
 
 $(document).ready(function() {
 	if (shouldCheckIfPassed) checkIfAllPassed();
-	$.post("panel_bridge.php", {"get_students": null}, function(response) {
-		studentList = JSON.parse(response);
-	});
 });
 
 function checkIfAllPassed() {
