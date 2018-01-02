@@ -20,7 +20,7 @@
     </style>
     <h5><a href="."><i class="fa fa-chevron-left"></i> Back to TigerScore</a></h5>
     <br>
-    <?
+    <?php
   }
   ?>
   <div id="actual_testing_form">
