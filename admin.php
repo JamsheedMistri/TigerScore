@@ -424,13 +424,13 @@ if (!isset($_SESSION['master'])) {
 								<br>
 								<h5>Receipt for Users (when they submit application)</h5>
 								<b>Key:</b><br>
-								<b>%%school_name%</b> - school name<br>
-								<b>%%first_name%</b> - first name<br>
-								<b>%%middle_initial%</b> - middle initial<br>
-								<b>%%last_name%</b> - last name<br>
-								<b>%%new_belt%</b> - new belt<br>
-								<b>%%old_belt%</b> - old belt<br>
-								<b>%%new_belt_price%</b> - new belt price<br><br>
+								<b>%%school_name%%</b> - school name<br>
+								<b>%%first_name%%</b> - first name<br>
+								<b>%%middle_initial%%</b> - middle initial<br>
+								<b>%%last_name%%</b> - last name<br>
+								<b>%%new_belt%%</b> - new belt<br>
+								<b>%%old_belt%%</b> - old belt<br>
+								<b>%%new_belt_price%%</b> - new belt price<br><br>
 								<div id="receipt">
 									<?php echo getData("config/tigerscore.json")['receipt']; ?>
 								</div>
