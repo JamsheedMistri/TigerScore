@@ -14,7 +14,7 @@ if (isset($_POST['first_name'])) {
 	$cell_phone = $_POST['cell_phone'];
 	$email = $_POST['email'];
 
-	$id = strtolower($first_name."_".$middle_initial."_".$last_name);
+	$id = str_replace(" ", "-", strtolower($first_name."_".$middle_initial."_".$last_name));
 	$payment_validation_string = uniqid();
 
 	$current[$id] = [
