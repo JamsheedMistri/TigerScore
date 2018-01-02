@@ -17,8 +17,8 @@ if (isset($_GET['id'])) {
 		$payment_validation = str_replace("%%first_name%%", $user['first_name'], $payment_validation);
 		$payment_validation = str_replace("%%middle_initial%%", $user['middle_initial'], $payment_validation);
 		$payment_validation = str_replace("%%last_name%%", $user['last_name'], $payment_validation);
-		$payment_validation = str_replace("%%new_belt%%", $user['testing_for'], $payment_validation);
-		$payment_validation = str_replace("%%old_belt%%", getData("config/belts.json")[$present_belt]['name'], $payment_validation);
+		$payment_validation = str_replace("%%new_belt%%", getData("config/belts.json")[$user['testing_for']]['name'], $payment_validation);
+		$payment_validation = str_replace("%%old_belt%%", getData("config/belts.json")[$user['present_belt']]['name'], $payment_validation);
 		$payment_validation = str_replace("%%new_belt_price%%", "$".getData("config/belts.json")[$user['present_belt']]['price'], $payment_validation);
 		$payment_validation = wordwrap($payment_validation, 70, "\r\n");
 
