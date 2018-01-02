@@ -161,7 +161,7 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 									?>
 								</h5>
 							</div>
-							<?
+							<?php
 						} else {
 							?>
 							<h2 class="orange">Testing <?php echo $student_full_name; ?></h2>
