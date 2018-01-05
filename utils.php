@@ -17,7 +17,7 @@ function resetTigerScore() {
 	file_put_contents("config/belts.json", "{}");
 	file_put_contents("config/tigerscore.json", '{"configured": false}');
 	file_put_contents("data/tests.json", "{}");
-	file_put_contents("data/last5.json", "[]");
+	file_put_contents("data/last10.json", "[]");
 	file_put_contents("data/log.json", "[]");
 
 	$_SESSION = [];
@@ -144,4 +144,17 @@ function addToLog($message) {
 	$current = getData("data/log.json");
 	$current[] = $message;
 	setData("data/log.json", $current);
+}
+
+function updateLast10($id) {
+	$current = getData("data/last10.json");
+	$new = [$id];
+	$count = 1;
+	foreach ($current as $i) {
+		if ($count >= 10) break;
+		if ($i == $id) continue;
+		$new[] = $i;
+		$count ++;
+	}
+	setData("data/last10.json", $new);
 }

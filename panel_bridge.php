@@ -58,17 +58,6 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 		$current = getData("data/tests.json");
 		$current[$_POST['update_tester']]['latest_tester'] = isset($_SESSION['master']) ? $_SESSION['master'] : $_SESSION['instructor'];
 		setData("data/tests.json", $current);
-	} else if (isset($_POST['update_last5'])) {
-		$current = getData("data/last5.json");
-		$new = [$_POST['update_last5']];
-		$count = 1;
-		foreach ($current as $i) {
-			if ($count >= 5) break;
-			if ($i == $_POST['update_last5']) continue;
-			$new[] = $i;
-			$count ++;
-		}
-		setData("data/last5.json", $new);
 	} else {
 		header("Location: .");
 	}

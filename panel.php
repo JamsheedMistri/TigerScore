@@ -36,6 +36,7 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 					<ul>
 						<?php
 						$student_id = $_GET['student'];
+						updateLast10($student_id);
 						$types = getData("data/tests.json")[$student_id]['requirements'];
 
 						foreach ($types as $type => $requirements) {
@@ -67,15 +68,15 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 				}
 				?>
 				<br><br><br><br><br><br><br><br>
-				<h4>Last 5 Students</h4>
+				<h4>Last 10 Students</h4>
 				<ul>
 					<?php
-					$last5 = getData("data/last5.json");
+					$last10 = getData("data/last10.json");
 
-					for ($i = 0; $i < sizeof($last5); $i ++) {
-						if ($i >= 5) break;
-						echo '<a href="?student_test&student='.$last5[$i].'"><li>';
-						echo drawStudent($last5[$i]);
+					for ($i = 0; $i < sizeof($last10); $i ++) {
+						if ($i >= 10) break;
+						echo '<a href="?student_test&student='.$last10[$i].'"><li>';
+						echo drawStudent($last10[$i]);
 						echo '</li></a>';
 					}
 					?>

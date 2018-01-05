@@ -19,8 +19,6 @@ $(".pass_button").click(function() {
 
 	// Update the latest tester
 	$.post("panel_bridge.php", {"update_tester": id}, function(response) {});
-	// Update last5
-	$.post("panel_bridge.php", {"update_last5": id}, function(response) {});
 	
 	// Check if everything passed for that type
 	$.post("panel_bridge.php", {"check_if_all_passed_for_type": null, "student": student, "type": type}, function(response) {
