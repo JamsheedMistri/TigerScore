@@ -171,3 +171,19 @@ label {
 	float: left;
 	font-size: 1.5em;
 }
+
+#loading {
+	width: 100vw;
+	height: 100vh;
+	text-align: center;
+	color: #007bff;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: rgba(255,255,255,0.8);
+	display: none;
+}
+
+#loading h5 {
+	line-height: 100vh;
+}

@@ -9,6 +9,7 @@
 </head>
 
 <body>
+  <div id="loading"><h5><i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Loading...</h5></div>
   <section id="form">
     <?php
     if (isset($_GET['from_app'])) {

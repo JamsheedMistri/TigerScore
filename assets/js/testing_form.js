@@ -61,6 +61,8 @@ $('input[type="submit"]').click(function() {
 		return;
 	}
 
+	$("#loading").css("display", "block");
+
 	$.post("testing_bridge.php", {"first_name": first_name, "middle_initial": middle_initial, "last_name": last_name, "age": age, "gender": gender, "belt_size": belt_size, "present_belt": present_belt, "testing_for": testing_for, "home_phone": home_phone, "cell_phone": cell_phone, "email": email}, function(response) {
 		if (response == "success") alert("Your form was submitted successfully! Your receipt has been emailed to you.");
 		else alert("Something went wrong and your form was not submitted. Please try again later. If this problem persists, please contact us.");
