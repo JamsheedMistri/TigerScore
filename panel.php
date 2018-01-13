@@ -36,7 +36,6 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 					<ul>
 						<?php
 						$student_id = $_GET['student'];
-						updateLast10($student_id);
 						$types = getData("data/tests.json")[$student_id]['requirements'];
 
 						foreach ($types as $type => $requirements) {
@@ -86,12 +85,32 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 				<div id="content">
 					<?php
 					if (isset($_GET['student_search'])) {
-						?>
-						<h3>Search for a student</h3>
-						<input id="student_search" type="text" placeholder="Start typing..." autofocus />
-						<br><br>
-						<ul id="student_search_list" class="student_list">No results</ul>
-						<?php
+						if (isset($_POST['query'])) {
+							$query = $_POST['query'];
+							?>
+							<h3>Results for "<?php echo $query; ?>"</h3>
+							<ul class="student_list">
+								<?php
+								$tests = getData("data/tests.json");
+								foreach ($tests as $key => $test) {
+									$full_name = strtolower($test['first_name']." ".$test['last_name']);
+									if (strpos($full_name, strtolower($query)) !== false) {
+										echo "<a href='?student_test&student=$key'><li>".drawStudent($key)."</li></a>";
+									}
+								}
+								?>
+							</ul>
+							<?php
+						} else {
+							?>
+							<h3>Search for a student</h3>
+							<form action="panel.php?student_search" method="post">
+								<input type="hidden" name="student_search" />
+								<input type="text" id="student_search" name="query" placeholder="Type name here" autofocus />
+								<input type="submit" id="student_search_submit" value="Submit" />
+							</form>
+							<?php
+						}
 					} else if (isset($_GET['student_list'])) {
 						echo '<h3>List of all students</h3>';
 						echo '<ul class="student_list">';
@@ -103,6 +122,7 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 						echo '</ul>';
 					} else if (isset($_GET['student_test'])) {
 						$student_id = $_GET['student'];
+						updateLast10($student_id);
 						$student_data = getData("data/tests.json")[$student_id];
 						$student_full_name = $student_data['first_name']." ".$student_data['last_name'];
 						$student_first_name = $student_data['first_name'];
@@ -251,7 +271,9 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 						}
 					}
 				} else {
-					header("Location: ?student_search");
+					?>
+					<script> window.location.replace("?student_search"); </script>
+					<?php
 				}
 				?>
 			</div>
@@ -266,17 +288,6 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 		var first_name = '".getData("data/tests.json")[$_GET['student']]['first_name']."';
 		shouldCheckIfPassed = true;
 		</script>";
-	} else if (isset($_GET['student_search'])) {
-		$current = getData("data/tests.json");
-		$new = [];
-		foreach ($current as $key => $value) {
-			$new[$key] = [
-				"first_name" => $current[$key]['first_name'],
-				"last_name" => $current[$key]['last_name'],
-				"draw" =>	drawStudent($key)
-			];
-		}
-		echo "<script>var studentList = ".json_encode($new).";</script>";
 	}
 	?>
 	<script src="assets/js/panel.js"></script>
