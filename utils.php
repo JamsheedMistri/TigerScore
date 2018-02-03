@@ -143,7 +143,7 @@ function drawStudent($id) {
 function addToLog($message) {
 	$time = date(DATE_RFC2822); //Wed, 25 Sep 2013 15:28:57 -0700
 	$current = getData("data/log.json");
-	$current[] = $time . $message;
+	$current[] = "[" . $time . "] " . $message;
 	setData("data/log.json", $current);
 }
 
