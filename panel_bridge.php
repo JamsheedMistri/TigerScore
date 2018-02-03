@@ -13,13 +13,14 @@ if (!isset($_SESSION['instructor']) && !isset($_SESSION['master'])) {
 
 		if ($tests[$student]['requirements'][$type][$requirement]) {
 			$tests[$student]['requirements'][$type][$requirement] = false;
+			addToLog($logged_in_instructor." failed ".getData("data/tests.json")[$student]['first_name']." ".getData("data/tests.json")[$student]['last_name']."'s requirement for ".getData("config/curriculum/$type.json")[$requirement].".");
 		} else {
 			$tests[$student]['requirements'][$type][$requirement] = true;
+			addToLog($logged_in_instructor." passed ".getData("data/tests.json")[$student]['first_name']." ".getData("data/tests.json")[$student]['last_name']."'s requirement for ".getData("config/curriculum/$type.json")[$requirement].".");
 		}
 
 		setData("data/tests.json", $tests);
 
-		addToLog($logged_in_instructor." toggled ".getData("data/tests.json")[$student]['first_name']." ".getData("data/tests.json")[$student]['last_name']."'s requirement for ".getData("config/curriculum/$type.json")[$requirement].".");
 	} else if (isset($_POST['check_if_all_passed_for_type'])) {
 		$student = $_POST['student'];
 		$type = $_POST['type'];
